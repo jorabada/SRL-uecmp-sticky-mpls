@@ -1,0 +1,121 @@
+name: srl-uecmp-sticky-mpls
+
+topology:
+  defaults:
+    kind: srl
+  kinds:
+    srl:
+      image: srlinux:latest
+      license: ./license.txt      
+    linux:
+      image: registry.srlinux.dev/pub/hellt/network-multitool:latest
+  nodes:
+    ### FABRIC ###
+    leaf1:
+      kind: srl
+      type: sxr1x44s
+      # startup-config: config/leaf1.cfg
+    leaf2:
+      kind: srl
+      type: ixrx3b    
+      # startup-config: config/leaf2.cfg
+    leaf3:
+      kind: srl
+      type: sxr1x44s    
+      # startup-config: config/leaf3.cfg
+    leaf4:
+      kind: srl
+      type: ixrx3b    
+      # startup-config: config/leaf4.cfg
+    pe5:
+      kind: srl
+      type: sxr1x44s    
+      # startup-config: config/pe5.cfg
+    pe6:
+      kind: srl
+      type: ixrx3b    
+      # startup-config: config/pe6.cfg
+    ### CEs ###
+    ce12:
+      kind: srl
+      type: ixrd3    
+      # startup-config: config/ce12.cfg
+    ce13:
+      kind: srl
+      type: ixrd3    
+      # startup-config: config/ce13.cfg
+    ce21:
+      kind: srl
+      type: ixrd3    
+      # startup-config: config/ce21.cfg
+    ce31:
+      kind: srl
+      type: ixrd3    
+      # startup-config: config/ce31.cfg
+    ce41:
+      kind: srl
+      type: ixrd3    
+      # startup-config: config/ce41.cfg      
+    ### CLIENTS ###
+    client11:
+      kind: linux
+      binds:
+        - ./config/eth1.sh:/tmp/eth1.sh
+      exec:
+        - bash /tmp/eth1.sh
+        - ip link set eth1.1 address 00:c1:ab:00:00:01
+        - ip addr add 10.10.10.11/24 dev eth1.1
+        - ip link set eth1.2 address 00:c1:ab:00:00:01
+        - ip addr add 11.11.11.11/24 dev eth1.2
+        - ip route del default
+        - ip route add default via 10.10.10.254 dev eth1.1        
+    client51:
+      kind: linux
+      binds:
+        - ./config/eth1.sh:/tmp/eth1.sh
+      exec:
+        - bash /tmp/eth1.sh
+        - ip link set eth1.1 address 00:c1:ab:00:00:01
+        - ip addr add 50.50.50.51/24 dev eth1.1
+        - ip link set eth1.2 address 00:c1:ab:00:00:01
+        - ip addr add 51.51.51.51/24 dev eth1.2
+        - ip route del default
+        - ip route add default via 50.50.50.254 dev eth1.1 
+    client61:
+      kind: linux
+      binds:
+        - ./config/eth1.sh:/tmp/eth1.sh
+      exec:
+        - bash /tmp/eth1.sh
+        - ip link set eth1.1 address 00:c1:ab:00:00:01
+        - ip addr add 60.60.60.61/24 dev eth1.1
+        - ip link set eth1.2 address 00:c1:ab:00:00:01
+        - ip addr add 61.61.61.61/24 dev eth1.2
+        - ip route del default
+        - ip route add default via 60.60.60.254 dev eth1.1
+  links:
+    # clients links towards leaaves and pes
+    - endpoints: ["client11:eth1", "leaf1:e1-1"]
+    - endpoints: ["client51:eth1", "pe5:e1-1"]
+    - endpoints: ["client61:eth1", "pe6:e1-1"]
+    # ces to leaves
+    - endpoints: ["ce12:e1-1", "leaf1:e1-2"]
+    - endpoints: ["ce13:e1-1", "leaf1:e1-3"]
+    - endpoints: ["ce21:e1-1", "leaf2:e1-1"]    
+    - endpoints: ["ce31:e1-1", "leaf3:e1-1"]    
+    - endpoints: ["ce31:e1-2", "leaf4:e1-1"]
+    - endpoints: ["ce41:e1-1", "leaf3:e1-2"]    
+    - endpoints: ["ce41:e1-2", "leaf4:e1-2"]    
+    # leaf-pe links
+    ## leaf1
+    - endpoints: ["leaf1:e1-39", "pe5:e1-11"]
+    - endpoints: ["leaf1:e1-40", "pe6:e1-11"]
+    ## leaf2
+    - endpoints: ["leaf2:e1-39", "pe5:e1-12"]
+    - endpoints: ["leaf2:e1-40", "pe6:e1-12"]
+    ## leaf3
+    - endpoints: ["leaf3:e1-39", "pe5:e1-13"]
+    - endpoints: ["leaf3:e1-40", "pe6:e1-13"]
+    ## leaf4
+    - endpoints: ["leaf4:e1-39", "pe5:e1-14"]
+    - endpoints: ["leaf4:e1-40", "pe6:e1-14"]
