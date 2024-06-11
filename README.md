@@ -2,7 +2,7 @@
 
 This lab shows an example of the Centralized Routing architecture deployed with EVPN IFL IP Aliasing for MPLS tunnels. The lab is depicted in the following diagram:
 
-![](srl-ip-aliasing-centralized-routing-mpls.drawio.png)
+![](srl-uecmp-sticky-mpls.drawio.png)
 
 And consists of the following nodes:
 
