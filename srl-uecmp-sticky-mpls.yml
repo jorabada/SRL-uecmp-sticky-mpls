@@ -94,7 +94,7 @@ topology:
         - ip route del default
         - ip route add default via 60.60.60.254 dev eth1.1
   links:
-    # clients links towards leaaves and pes
+    # clients links towards leaves and pes
     - endpoints: ["client11:eth1", "leaf1:e1-1"]
     - endpoints: ["client51:eth1", "pe5:e1-1"]
     - endpoints: ["client61:eth1", "pe6:e1-1"]
@@ -111,11 +111,11 @@ topology:
     - endpoints: ["leaf1:e1-39", "pe5:e1-11"]
     - endpoints: ["leaf1:e1-40", "pe6:e1-11"]
     ## leaf2
-    - endpoints: ["leaf2:e1-39", "pe5:e1-12"]
-    - endpoints: ["leaf2:e1-40", "pe6:e1-12"]
+    - endpoints: ["leaf2:e1-35", "pe5:e1-12"]
+    - endpoints: ["leaf2:e1-36", "pe6:e1-12"]
     ## leaf3
     - endpoints: ["leaf3:e1-39", "pe5:e1-13"]
     - endpoints: ["leaf3:e1-40", "pe6:e1-13"]
     ## leaf4
-    - endpoints: ["leaf4:e1-39", "pe5:e1-14"]
-    - endpoints: ["leaf4:e1-40", "pe6:e1-14"]
+    - endpoints: ["leaf4:e1-35", "pe5:e1-14"]
+    - endpoints: ["leaf4:e1-36", "pe6:e1-14"]
