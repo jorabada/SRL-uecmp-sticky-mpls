@@ -67,6 +67,7 @@ topology:
         - ip addr add 10.10.10.11/24 dev eth1.1
         - ip link set eth1.2 address 00:c1:ab:00:00:01
         - ip addr add 11.11.11.11/24 dev eth1.2
+        - http_proxy=http://135.231.216.56:3128/ apk add nmap-nping
         - ip route del default
         - ip route add default via 10.10.10.254 dev eth1.1        
     client51:
@@ -79,6 +80,7 @@ topology:
         - ip addr add 50.50.50.51/24 dev eth1.1
         - ip link set eth1.2 address 00:c1:ab:00:00:01
         - ip addr add 51.51.51.51/24 dev eth1.2
+        - http_proxy=http://135.231.216.56:3128/ apk add nmap-nping
         - ip route del default
         - ip route add default via 50.50.50.254 dev eth1.1 
     client61:
@@ -91,6 +93,7 @@ topology:
         - ip addr add 60.60.60.61/24 dev eth1.1
         - ip link set eth1.2 address 00:c1:ab:00:00:01
         - ip addr add 61.61.61.61/24 dev eth1.2
+        - http_proxy=http://135.231.216.56:3128/ apk add nmap-nping
         - ip route del default
         - ip route add default via 60.60.60.254 dev eth1.1
   links:
