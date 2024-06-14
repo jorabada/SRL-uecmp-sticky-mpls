@@ -1264,3 +1264,86 @@ NexthopGroup - num=69
             ecmp_set_size_ 60
             hierarchy_level_ 1
 ```
+
+## Data Plane checks
+
+The data plane can be checked for instance using the `nping` tool, which allows sending multiple flows with consecutive destination ports.
+As an example:
+
+`nping --udp 1.2.3.4 --source-ip 10.10.10.11 --source-port 12345 --dest-port 10000-10006 -e eth1.1 -d5 -c 1 --dest-mac 1a:6b:08:ff:00:00`
+
+Where:
+- `nping` starts the tool
+- `udp` uses UDP instead of TCP
+- `-c 1` sends one packet per destination port
+- the `--dest-mac` command is needed to make sure the packets are routed properly
+
+When sent from e.g., Client11:
+
+<pre>
+bash-5.0# nping --udp 1.2.3.4 --source-ip 10.10.10.11 --source-port 12345 --dest-port 10000-10006 -e eth1.1 -d5 -c 1 --dest-mac 1a:6b:08:ff:00:00
+Using network interface "eth1.1"
+Nping will send packets at raw ethernet level
+
+Starting Nping 0.7.80 ( https://nmap.org/nping ) at 2024-06-14 11:32 UTC
+Resolving specified targets...
+Determining target 1.2.3.4 MAC address or next hop MAC address...
+    > Checking system's ARP cache...
+    > Success: Entry found [1a:6b:08:00:00:00]
++-----------------TARGET-----------------+
+Device Name:            eth1.1
+Device FullName:        eth1.1
+Device Type:            Ethernet
+Directly connected?:    no
+Address family:         AF_INET
+Resolved Hostname:
+Supplied Hostname:      (null)
+Target Address:         1.2.3.4
+Source Address:         10.10.10.11
+Spoofed Address:        10.10.10.11
+Next Hop Address:       10.10.10.254
+Target MAC Address:     00:00:00:00:00:00
+Source MAC Address:     00:c1:ab:00:00:01
+Next Hop MAC Address:   1a:6b:08:00:00:00
+1 target IP address determined.
+libnsock nsock_iod_new2(): nsock_iod_new (IOD #1)
+BPF-filter: (not src host 10.10.10.11 and dst host 10.10.10.11) and ((udp and dst port 12345) or (icmp and (icmp[icmptype] = 3 or icmp[icmptype] = 4 or icmp[icmptype] = 5 or icmp[icmptype] = 11 or icmp[icmptype] = 12)) )
+Opening pcap device eth1.1
+libnsock nsock_pcap_open(): PCAP requested on device 'eth1.1' with berkeley filter '(not src host 10.10.10.11 and dst host 10.10.10.11) and ((udp and dst port 12345) or (icmp and (icmp[icmptype] = 3 or icmp[icmptype] = 4 or icmp[icmptype] = 5 or icmp[icmptype] = 11 or icmp[icmptype] = 12)) )' (promisc=1 snaplen=8192 to_ms=200) (IOD #1)
+libnsock nsock_pcap_open(): PCAP created successfully on device 'eth1.1' (pcap_desc=4 bsd_hack=0 to_valid=1 l3_offset=14) (IOD #1)
+Pcap device eth1.1 open successfully
+Next target returned by getNextTarget(): Targets[0/1] --> 1.2.3.4
+
+fillPacket(target=0x55ce726e4820, port=10000, buff=0x7ffc934ae579, bufflen=65535, filledlen=0x7ffc934a22f0 rawfd=-1)
+libnsock nsock_pcap_read_packet(): Pcap read request from IOD #1  EID 13
+libnsock nsock_pcap_read_packet(): Pcap read request from IOD #1  EID 21
+libnsock nsock_timer_create(): Timer created - 1ms from now.  EID 28
+libnsock nsock_trace_handler_callback(): Callback: TIMER SUCCESS for EID 28
+nping_event_handler()
+nping_event_handler(): Received callback of type TIMER with status SUCCESS
+SENT (0.0751s) UDP [10.10.10.11:12345 > 1.2.3.4:10000 len=8 csum=0x907A] IP [ver=4 ihl=5 tos=0x00 iplen=28 id=31373 foff=0 ttl=64 proto=17 csum=0xe829]
+0000   1a 6b 08 ff 00 00 00 c1  ab 00 00 01 08 00 45 00  .k............E.
+0010   00 1c 7a 8d 00 00 40 11  e8 29 0a 0a 0a 0b 01 02  ..z...@..)......
+0020   03 04 30 39 27 10 00 08  90 7a                    ..09'....z
+Next target returned by getNextTarget(): Targets[0/1] --> 1.2.3.4
+
+fillPacket(target=0x55ce726e4820, port=10001, buff=0x7ffc934ae579, bufflen=65535, filledlen=0x7ffc934a22f0 rawfd=-1)
+libnsock nsock_pcap_read_packet(): Pcap read request from IOD #1  EID 37
+libnsock nsock_pcap_read_packet(): Pcap read request from IOD #1  EID 45
+libnsock nsock_timer_create(): Timer created - 1000ms from now.  EID 52
+libnsock nsock_trace_handler_callback(): Callback: READ-PCAP TIMEOUT for EID 13
+nping_event_handler()
+nping_event_handler(): Received callback of type READ-PCAP with status TIMEOUT
+nping_event_handler(): READ-PCAP timeout: Resource temporarily unavailable
+
+libnsock nsock_trace_handler_callback(): Callback: READ-PCAP TIMEOUT for EID 21
+nping_event_handler()
+nping_event_handler(): Received callback of type READ-PCAP with status TIMEOUT
+nping_event_handler(): READ-PCAP timeout: Resource temporarily unavailable
+
+Next target returned by getNextTarget(): Targets[0/1] --> 1.2.3.4
+
+----snip----
+</pre>
+
+Stats or wireshark can be used on the CEs to check who receives the packets.
