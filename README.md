@@ -1,6 +1,11 @@
 # SRL lab demonstrating Unequal ECMP, combined ECMP and resilient hashing
 
-This lab shows an example of the Centralized Routing architecture deployed with EVPN IFL IP Aliasing for MPLS tunnels. The lab is depicted in the following diagram:
+This lab demonstrates the following features simultaneously on SXR and DNX platforms:
+- Unequal ECMP for EVPN IFL routes
+- along with combined ECMP of PE-CE and EVPN IFL routes  
+- along with resilient hashing
+
+ The lab is depicted in the following diagram:
 
 ![](srl-uecmp-sticky-mpls.drawio.png)
 
