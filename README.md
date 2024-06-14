@@ -1,4 +1,4 @@
-# SRL lab demonstrating Unequal ECMP, combined ECMP and resilient hashing
+# SRL lab demonstrating Unequal ECMP, combined ECMP, IP Aliasing and resilient hashing
 
 This lab demonstrates the following features simultaneously on SXR and DNX platforms:
 - Unequal ECMP for EVPN IFL routes
